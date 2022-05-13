@@ -17,7 +17,7 @@ from PIL import Image
 import pickle
 from multiprocessing.shared_memory import SharedMemory
 
-import xtorch
+import shmtorch
 
 if __name__ == '__main__':
     mem('Initilized')
@@ -27,13 +27,13 @@ if __name__ == '__main__':
     mem('After loading model')
 
     # load metadata from pickle
-    metadata: xtorch.XMetadata
+    metadata: shmtorch.XMetadata
     with open('/Users/freckie/prj/shmfaas/torchtest/0512-test/vgg16-meta', 'rb') as f:
         metadata = pickle.load(f)
     mem('After loading the metadata')
 
     # load tensors into the model
-    shm, model = xtorch.x_load_states(model_skeleton, metadata)
+    shm, model = shmtorch.x_load_states(model_skeleton, metadata)
     model.eval()
     mem('After loading tensors')
 

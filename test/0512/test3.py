@@ -17,7 +17,7 @@ from PIL import Image
 import pickle
 from multiprocessing.shared_memory import SharedMemory
 
-import xtorch
+import shmtorch
 
 if __name__ == '__main__':
     mem('Initilized')

@@ -17,7 +17,7 @@ from PIL import Image
 import pickle
 from multiprocessing.shared_memory import SharedMemory
 
-import xtorch
+import shmtorch
 
 if __name__ == '__main__':
     mem('Initilized')
@@ -34,7 +34,7 @@ if __name__ == '__main__':
     mem('After connecting state_dict and model')
 
     # save to shm
-    shm, metadata = xtorch.x_save_states(model, 'shm_1705')
+    shm, metadata = shmtorch.x_save_states(model, 'shm_1705')
     with open('./vgg16-meta', 'wb') as f:
         pickle.dump(metadata, f)
     print(metadata)
