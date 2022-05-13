@@ -1,3 +1,10 @@
+# Fr3ky
+.DS_Store
+.vscode/
+*.pt
+*.pth
+*.pickle
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
