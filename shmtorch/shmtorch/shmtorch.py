@@ -6,6 +6,9 @@ from multiprocessing.shared_memory import SharedMemory
 import torch
 import numpy as np
 
+class XMetadata: ...
+class XMetaItem: ...
+
 class XMetadata:
     def __init__(self, shmname=None):
         self._shmname = shmname
@@ -17,20 +20,40 @@ class XMetadata:
         return len(self._items)
 
     def add(self, name: str, shape: Tuple, dtype: Any, nbytes: int):
-        self._items.append((name, shape, dtype, nbytes))
+        self._items.append(XMetaItem(name, shape, dtype, nbytes))
     
+    @property
     def shmname(self) -> str:
-        return str(self._shmname)
+        return self._shmname
     
-    def set_shmname(self, shmname: str):
-        self._shmname = shmname
-
-    def items(self) -> list[Tuple[str, Tuple, Any, int]]:
+    def items(self) -> list[XMetaItem]:
         return self._items
 
+class XMetaItem:
+    def __init__(self, name: str, shape: Tuple, dtype: Any, nbytes: int):
+        self._name = name
+        self._shape = shape
+        self._dtype = dtype
+        self._nbytes = nbytes
+    
+    @property
+    def name(self) -> str:
+        return self._name
+    
+    @property
+    def shape(self) -> Tuple:
+        return self._shape
+
+    @property
+    def dtype(self):
+        return self._dtype
+    
+    @property
+    def nbytes(self) -> int:
+        return self._nbytes
+
 def x_save_states(model: torch.nn.Module, shmname: str) -> Tuple[SharedMemory, XMetadata]:
-    metadata = XMetadata()
-    metadata.set_shmname(shmname)
+    metadata = XMetadata(shmname)
 
     # Extract tensors from the model
     shmsize = 0
@@ -83,25 +106,27 @@ def x_load_states(model: torch.nn.Module, metadata: XMetadata) -> Tuple[SharedMe
     copied_model.train(False)
 
     # Load tensors from the shared memory block
-    shm = SharedMemory(metadata.shmname())
+    shm = SharedMemory(metadata.shmname)
 
     offset, curr = 0, 0
-    items = metadata._items
+    items = metadata.items()
     modules = [module for _, module in copied_model.named_modules()]
     for i, module in enumerate(modules):
         param_counts = metadata._items_count[i][0]
         buffer_counts = metadata._items_count[i][1]
 
         for _ in range(param_counts):
-            _shmarray = np.ndarray(shape=items[curr][1], dtype=items[curr][2], buffer=shm.buf[offset:offset+items[curr][3]])
-            module.register_parameter(name=items[curr][0], param=torch.nn.Parameter(torch.from_numpy(_shmarray)))
-            offset += items[curr][3]
+            _item = items[curr]
+            _shmarray = np.ndarray(shape=_item.shape, dtype=_item.dtype, buffer=shm.buf[offset:offset+_item.nbytes])
+            module.register_parameter(name=_item.name, param=torch.nn.Parameter(torch.from_numpy(_shmarray)))
+            offset += _item.nbytes
             curr += 1
 
         for _ in range(buffer_counts):
-            _shmarray = np.ndarray(shape=items[curr][1], dtype=items[curr][2], buffer=shm.buf[offset:offset+items[curr][3]])
-            module.register_buffer(name=items[curr][0], param=torch.from_numpy(_shmarray))
-            offset += items[curr][3]
+            _item = items[curr]
+            _shmarray = np.ndarray(shape=_item.shape, dtype=_item.dtype, buffer=shm.buf[offset:offset+_item.nbytes])
+            module.register_buffer(name=_item.name, param=torch.from_numpy(_shmarray))
+            offset += _item.nbytes
             curr += 1
 
     return shm, copied_model
