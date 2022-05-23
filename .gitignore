@@ -4,6 +4,8 @@
 *.pt
 *.pth
 *.pickle
+*.old
+vgg16-meta
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
