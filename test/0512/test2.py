@@ -20,7 +20,7 @@ from multiprocessing.shared_memory import SharedMemory
 import shmtorch
 
 if __name__ == '__main__':
-    mem('Initilized')
+    mem('Initialized')
 
     # model load
     model_skeleton = models.vgg16(False, False)
@@ -28,7 +28,7 @@ if __name__ == '__main__':
 
     # load metadata from pickle
     metadata: shmtorch.XMetadata
-    with open('/Users/freckie/prj/shmfaas/torchtest/0512-test/vgg16-meta', 'rb') as f:
+    with open('/Users/freckie/prj/shmfaas/test/0512/vgg16-meta', 'rb') as f:
         metadata = pickle.load(f)
     mem('After loading the metadata')
 
@@ -45,7 +45,7 @@ if __name__ == '__main__':
     input()
 
     # predict
-    input_img = Image.open('/Users/freckie/prj/shmfaas/torchtest/dog-224.jpg').convert('RGB')
+    input_img = Image.open('/Users/freckie/prj/shmfaas/test/0623/fn-shmfaas/dog-224.jpg').convert('RGB')
     input_tensor = torch.unsqueeze(ToTensor()(np.array(input_img)), 0)
     model.eval()
     result = model(input_tensor)

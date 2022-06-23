@@ -20,7 +20,7 @@ from multiprocessing.shared_memory import SharedMemory
 import shmtorch
 
 if __name__ == '__main__':
-    mem('Initilized')
+    mem('Initialized')
 
     # model load
     model = models.vgg16(False, False)
