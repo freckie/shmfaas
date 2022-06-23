@@ -1,0 +1,16 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: fn-shmfaas
+  namespace: freckie
+spec:
+  template:
+    spec:
+      hostIPC: true
+      containers:
+      - image: ghcr.io/freckie/fn-shmfaas
+        env:
+        - name: SHMM_NAME
+          value: "vgg16"
+        - name: SHMM_TAG
+          value: "0.0.1"
