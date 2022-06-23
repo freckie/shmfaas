@@ -1,12 +1,13 @@
 import os
+import json
+import pickle
 
 from flask import Flask
 
-import json
 import numpy as np
 import torch
 import torchvision.models as models
-import pickle
+from torchvision.transforms import ToTensor
 from PIL import Image
 
 import shmtorch
@@ -28,7 +29,7 @@ def predict():
     del metadata
 
     img = Image.open('/app/dog-224.jpg').convert('RGB')
-    t = torch.unsqueeze(torch.from_numpy(np.array(img)), 0)
+    t = torch.unsqueeze(ToTensor()(np.array(img)), 0)
     result = model(t)
 
     return json.dumps({'result': str(torch.argmax(result, dim=1))})
