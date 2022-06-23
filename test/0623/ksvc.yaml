@@ -9,8 +9,10 @@ spec:
       hostIPC: true
       containers:
       - image: ghcr.io/freckie/fn-shmfaas:0.0.1
+        imagePullPolicy: Always #for debug
         env:
         - name: SHMM_NAME
           value: "vgg16"
         - name: SHMM_TAG
           value: "0.0.1"
+
