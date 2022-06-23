@@ -8,7 +8,7 @@ spec:
     spec:
       hostIPC: true
       containers:
-      - image: ghcr.io/freckie/fn-shmfaas
+      - image: ghcr.io/freckie/fn-shmfaas:0.0.1
         env:
         - name: SHMM_NAME
           value: "vgg16"
