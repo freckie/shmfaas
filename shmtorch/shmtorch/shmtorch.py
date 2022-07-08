@@ -130,3 +130,16 @@ def x_load_states(model: torch.nn.Module, metadata: XMetadata) -> Tuple[SharedMe
             curr += 1
 
     return shm, copied_model
+
+def x_calc_bytes(model: torch.nn.Module) -> int:
+    shmsize = 0
+    for _, module in model.named_modules():
+        for _, param in module.named_parameters(recurse=False):
+            t = param.numpy()
+            shmsize += t.nbytes
+
+        for _, buffer in module.named_buffers(recurse=False):
+            t = buffer.numpy()
+            shmsize += t.nbytes
+
+    return shmsize
