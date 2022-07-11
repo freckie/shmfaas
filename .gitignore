@@ -6,6 +6,8 @@
 *.pickle
 *.old
 vgg16-meta
+*.db3
+*.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
