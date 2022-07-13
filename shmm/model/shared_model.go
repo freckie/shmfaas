@@ -23,3 +23,39 @@ type GetSharedModelItem struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
+
+type GetModelTagResp struct {
+	ModelName string    `json:"model_name"`
+	TagName   string    `json:"tag_name"`
+	Shmname   string    `json:"shmname"`
+	Shmsize   int64     `json:"shmsize"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	Metadata  []byte    `json:"metadata"`
+}
+
+type PostModelTagReq struct {
+	MemRequest int64  `json:"mem_request"`
+	Metadata   string `json:"metadata"`
+}
+
+type PostModelTagResp struct {
+	Shmname string `json:"shmname"`
+	Shmsize int64  `json:"shmsize"`
+}
+
+type PutModelTagReq struct {
+	Shmname  string `json:"shmname"`
+	Shmsize  int64  `json:"shmsize"`
+	Metadata []byte `json:"metadata"`
+}
+
+type PutModelTagResp struct {
+	ModelName string    `json:"model_name"`
+	TagName   string    `json:"tag_name"`
+	Shmname   string    `json:"shmname"`
+	Shmsize   int64     `json:"shmsize"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	Metadata  []byte    `json:"metadata"`
+}

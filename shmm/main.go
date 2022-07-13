@@ -32,6 +32,7 @@ func main() {
 	router := httprouter.New()
 	router.GET("/shmodels", ep.ListSharedModel)
 	router.GET("/shmodels/:name", ep.GetSharedModel)
+	router.GET("/shmodels/:name/:tag", ep.GetModelTag)
 
 	// Serve
 	log.Println("Starting HTTP Server on port", port)

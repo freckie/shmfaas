@@ -10,14 +10,16 @@ require (
 )
 
 require (
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/mattn/go-sqlite3 v1.14.12 // indirect
 )
 
 replace (
-	github.com/freckie/shmfaas/shmm/model => ./model
-	github.com/freckie/shmfaas/shmm/entity => ./entity
 	github.com/freckie/shmfaas/shmm/endpoint => ./endpoint
+	github.com/freckie/shmfaas/shmm/entity => ./entity
 	github.com/freckie/shmfaas/shmm/internal/http => ./internal/http
+	github.com/freckie/shmfaas/shmm/internal/posix_shm => ./internal/posix_shm
+	github.com/freckie/shmfaas/shmm/model => ./model
 )
