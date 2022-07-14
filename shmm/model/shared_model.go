@@ -35,8 +35,7 @@ type GetModelTagResp struct {
 }
 
 type PostModelTagReq struct {
-	MemRequest int64  `json:"mem_request"`
-	Metadata   string `json:"metadata"`
+	MemRequest int64 `json:"mem_request"`
 }
 
 type PostModelTagResp struct {

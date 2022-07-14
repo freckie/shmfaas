@@ -8,7 +8,7 @@ import (
 
 // Create : inspired from github.com/fabiokung/shm
 func Create(shmname string, size int64, perm os.FileMode) (*os.File, error) {
-	name, err := syscall.BytePtrFromString(shmname) // char *
+	name, err := syscall.BytePtrFromString(setFirstCharToSlash(shmname)) // char *
 	if err != nil {
 		return nil, err
 	}
@@ -32,19 +32,26 @@ func Create(shmname string, size int64, perm os.FileMode) (*os.File, error) {
 
 // Unlink : inspired from github.com/fabiokung/shm
 func Unlink(shmname string) error {
-	name, err := syscall.BytePtrFromString(shmname)
+	name, err := syscall.BytePtrFromString(setFirstCharToSlash(shmname))
 	if err != nil {
 		return err
 	}
 
 	_, _, errNo := syscall.Syscall(syscall.SYS_SHM_UNLINK,
-		uintptr(unsafe.Pointer(name)),
-		uintptr(0),
-		uintptr(0),
+		uintptr(unsafe.Pointer(name)), 0, 0,
 	)
 	if errNo != 0 {
 		return errNo
 	}
 
 	return nil
+}
+
+func setFirstCharToSlash(str string) (result string) {
+	if str[0:1] != "/" {
+		result = "/" + str
+	} else {
+		result = str
+	}
+	return
 }

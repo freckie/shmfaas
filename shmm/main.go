@@ -33,6 +33,8 @@ func main() {
 	router.GET("/shmodels", ep.ListSharedModel)
 	router.GET("/shmodels/:name", ep.GetSharedModel)
 	router.GET("/shmodels/:name/:tag", ep.GetModelTag)
+	router.POST("/shmodels/:name/:tag", ep.PostModelTag)
+	router.DELETE("/shmodels/:name/:tag", ep.DeleteModelTag)
 
 	// Serve
 	log.Println("Starting HTTP Server on port", port)

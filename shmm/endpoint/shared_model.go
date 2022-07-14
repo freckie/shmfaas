@@ -11,8 +11,8 @@ import (
 	ishm "github.com/freckie/shmfaas/shmm/internal/posix_shm"
 	"github.com/freckie/shmfaas/shmm/model"
 
-	"github.com/google/uuid"
 	"github.com/julienschmidt/httprouter"
+	"github.com/rs/xid"
 	"gorm.io/gorm"
 )
 
@@ -169,41 +169,47 @@ func (e *Endpoint) PostModelTag(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 
-	var cntForValidation int
+	cntForValidation := 0
 	dbResult := db.Model(&entity.SharedModel{}).
 		Select("count(*) AS cnt").
 		Where("name = ? AND tag = ?", modelName, tagName).
 		First(&cntForValidation)
-	if !errors.Is(dbResult.Error, gorm.ErrRecordNotFound) ||
-		cntForValidation >= 1 {
-		ihttp.ResponseError(w, 500, "Already exists.")
-		return
+	if dbResult.Error != nil {
+		if !errors.Is(dbResult.Error, gorm.ErrRecordNotFound) ||
+			cntForValidation >= 1 {
+			ihttp.ResponseError(w, 500, "Already exists.")
+			return
+		}
 	}
 	shmsize := reqBody.MemRequest
+	shmname := xid.New().String()
 
-	shmname := uuid.NewString()
-	_, err = ishm.Create(shmname, shmsize, 0666)
+	err = db.Transaction(func(tx *gorm.DB) error {
+		_, err = ishm.Create(shmname, shmsize, 0666)
+		if err != nil {
+			return err
+		}
+
+		newModel := &entity.SharedModel{
+			Name:     modelName,
+			Tag:      tagName,
+			Shmname:  shmname,
+			Shmsize:  shmsize,
+			Status:   0,
+			Metadata: nil,
+		}
+		dbResult = tx.Model(&entity.SharedModel{}).
+			Create(&newModel)
+		if dbResult.Error != nil {
+			return dbResult.Error
+		}
+
+		return nil
+	})
 	if err != nil {
-		ihttp.ResponseError(w, 500, "Failed to create shm block :"+err.Error())
+		ihttp.ResponseError(w, 500, "Failed to create shm block : "+err.Error())
 		return
 	}
-
-	newModel := &entity.SharedModel{
-		Name:     modelName,
-		Tag:      tagName,
-		Shmname:  shmname,
-		Shmsize:  shmsize,
-		Status:   0,
-		Metadata: nil,
-	}
-	dbResult = db.Model(&entity.SharedModel{}).
-		Create(&newModel)
-	if dbResult.Error != nil {
-		ihttp.ResponseError(w, 500, dbResult.Error.Error())
-		return
-	}
-
-	db.Commit()
 
 	result.Shmname = shmname
 	result.Shmsize = shmsize
@@ -228,31 +234,32 @@ func (e *Endpoint) DeleteModelTag(w http.ResponseWriter, r *http.Request, ps htt
 	var shmname string
 	dbResult := db.Model(&entity.SharedModel{}).
 		Select("shmname").
-		Where("name = ? AND tag = ?").
+		Where("name = ? AND tag = ?", modelName, tagName).
 		First(&shmname)
-	if errors.Is(dbResult.Error, gorm.ErrRecordNotFound) {
-		ihttp.ResponseError(w, 404, "Model:Tag not found.")
-		return
+	if dbResult != nil {
+		if errors.Is(dbResult.Error, gorm.ErrRecordNotFound) {
+			ihttp.ResponseError(w, 404, "Model:Tag not found."+shmname)
+			return
+		}
 	}
 
 	err := db.Transaction(func(tx *gorm.DB) error {
-		defer tx.Commit()
-
 		err := ishm.Unlink(shmname)
 		if err != nil {
 			return err
 		}
 
-		dbResult := db.Unscoped().
+		dbResult := tx.Unscoped().
 			Where("name = ? AND tag = ?", modelName, tagName).
 			Delete(&entity.SharedModel{})
 		if dbResult.Error != nil {
 			return dbResult.Error
 		}
+
 		return nil
 	})
 	if err != nil {
-		ihttp.ResponseError(w, 500, "Failed to delete shm block :"+err.Error())
+		ihttp.ResponseError(w, 500, "Failed to delete shm block : "+err.Error())
 		return
 	}
 
