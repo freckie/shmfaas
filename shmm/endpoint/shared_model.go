@@ -3,8 +3,8 @@ package endpoint
 import (
 	"encoding/json"
 	"errors"
+	"io/fs"
 	"net/http"
-	"time"
 
 	"github.com/freckie/shmfaas/shmm/entity"
 	ihttp "github.com/freckie/shmfaas/shmm/internal/http"
@@ -58,15 +58,13 @@ func (e *Endpoint) GetSharedModel(w http.ResponseWriter, r *http.Request, ps htt
 	}
 
 	type queryResultType struct {
-		Name      string    `json:"name"`
-		Tag       string    `json:"tag"`
-		CreatedAt time.Time `json:"created_at"`
-		UpdatedAt time.Time `json:"updated_at"`
+		Name string `json:"name"`
+		Tag  string `json:"tag"`
 	}
 	var queryResult []queryResultType
 
 	dbResult := db.Model(&entity.SharedModel{}).
-		Select("name, tag, created_at, updated_at").
+		Select("name, tag").
 		Where("name = ?", modelName).
 		Find(&queryResult)
 	if dbResult.Error != nil {
@@ -81,11 +79,9 @@ func (e *Endpoint) GetSharedModel(w http.ResponseWriter, r *http.Request, ps htt
 
 	result.ModelName = modelName
 	result.TagCount = len(queryResult)
-	result.Tags = make([]model.GetSharedModelItem, len(queryResult))
+	result.Tags = make([]string, len(queryResult))
 	for idx, iter := range queryResult {
-		result.Tags[idx].TagName = iter.Tag
-		result.Tags[idx].CreatedAt = iter.CreatedAt
-		result.Tags[idx].UpdatedAt = iter.UpdatedAt
+		result.Tags[idx] = iter.Tag
 	}
 
 	ihttp.ResponseOK(w, "Success", result)
@@ -108,16 +104,14 @@ func (e *Endpoint) GetModelTag(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	type queryResultType struct {
-		Shmname   string
-		Shmsize   int64
-		CreatedAt time.Time
-		UpdatedAt time.Time
-		Metadata  []byte
+		Shmname  string
+		Shmsize  int64
+		Metadata string
 	}
 	var queryResult queryResultType
 
 	dbResult := db.Model(&entity.SharedModel{}).
-		Select("shmname, shmsize, created_at, updated_at, metadata").
+		Select("shmname, shmsize, metadata").
 		Where("name = ? AND tag = ?", modelName, tagName).
 		First(&queryResult)
 	if dbResult.Error != nil {
@@ -129,12 +123,17 @@ func (e *Endpoint) GetModelTag(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 
+	access := entity.Access{
+		ModelName: modelName,
+		ModelTag:  tagName,
+	}
+	db.Model(&entity.Access{}).
+		Create(&access)
+
 	result.ModelName = modelName
 	result.TagName = tagName
 	result.Shmname = queryResult.Shmname
 	result.Shmsize = queryResult.Shmsize
-	result.CreatedAt = queryResult.CreatedAt
-	result.UpdatedAt = queryResult.UpdatedAt
 	result.Metadata = queryResult.Metadata
 
 	ihttp.ResponseOK(w, "Success", result)
@@ -175,11 +174,14 @@ func (e *Endpoint) PostModelTag(w http.ResponseWriter, r *http.Request, ps httpr
 		Where("name = ? AND tag = ?", modelName, tagName).
 		First(&cntForValidation)
 	if dbResult.Error != nil {
-		if !errors.Is(dbResult.Error, gorm.ErrRecordNotFound) ||
-			cntForValidation >= 1 {
+		if !errors.Is(dbResult.Error, gorm.ErrRecordNotFound) {
 			ihttp.ResponseError(w, 500, "Already exists.")
 			return
 		}
+	}
+	if cntForValidation >= 1 {
+		ihttp.ResponseError(w, 500, "Already exists.")
+		return
 	}
 	shmsize := reqBody.MemRequest
 	shmname := xid.New().String()
@@ -196,7 +198,7 @@ func (e *Endpoint) PostModelTag(w http.ResponseWriter, r *http.Request, ps httpr
 			Shmname:  shmname,
 			Shmsize:  shmsize,
 			Status:   0,
-			Metadata: nil,
+			Metadata: "",
 		}
 		dbResult = tx.Model(&entity.SharedModel{}).
 			Create(&newModel)
@@ -213,6 +215,75 @@ func (e *Endpoint) PostModelTag(w http.ResponseWriter, r *http.Request, ps httpr
 
 	result.Shmname = shmname
 	result.Shmsize = shmsize
+	ihttp.ResponseOK(w, "Success", result)
+}
+
+// PUT /shmodels/:name/:tag
+func (e *Endpoint) PutModelTag(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	db := e.DB
+	result := model.PutModelTagResp{}
+
+	modelName := ps.ByName("name")
+	if modelName == "" {
+		ihttp.ResponseError(w, 404, "ModelName not found.")
+		return
+	}
+	tagName := ps.ByName("tag")
+	if tagName == "" {
+		ihttp.ResponseError(w, 404, "TagName not found.")
+		return
+	}
+
+	var shModel entity.SharedModel
+	dbResult := db.Model(&entity.SharedModel{}).
+		Select("shmname").
+		Where("name = ? AND tag = ?", modelName, tagName).
+		First(&shModel)
+	if dbResult != nil {
+		if errors.Is(dbResult.Error, gorm.ErrRecordNotFound) {
+			ihttp.ResponseError(w, 404, "Model:Tag not found.")
+			return
+		}
+	}
+
+	reqBody := model.PutModelTagReq{}
+	decoder := json.NewDecoder(r.Body)
+	decoder.UseNumber()
+	err := decoder.Decode(&reqBody)
+	if err != nil {
+		ihttp.ResponseError(w, 400, "Invalid JSON body.")
+		return
+	}
+	if len(reqBody.Metadata) <= 0 {
+		ihttp.ResponseError(w, 400, "Invalid metadata.")
+		return
+	}
+
+	shModel.Metadata = reqBody.Metadata
+	shModel.Status = 1
+
+	err = db.Transaction(func(tx *gorm.DB) error {
+		// Update with conditions
+		dbResult := tx.Model(&shModel).
+			Where("name = ? AND tag = ?", modelName, tagName).
+			Update("metadata", reqBody.Metadata)
+		if dbResult.Error != nil {
+			return dbResult.Error
+		}
+
+		return nil
+	})
+	if err != nil {
+		ihttp.ResponseError(w, 500, "Failed to update shm block : "+err.Error())
+		return
+	}
+
+	result.ModelName = modelName
+	result.TagName = tagName
+	result.Shmname = shModel.Shmname
+	result.Shmsize = shModel.Shmsize
+	result.Metadata = shModel.Metadata
+
 	ihttp.ResponseOK(w, "Success", result)
 }
 
@@ -246,7 +317,9 @@ func (e *Endpoint) DeleteModelTag(w http.ResponseWriter, r *http.Request, ps htt
 	err := db.Transaction(func(tx *gorm.DB) error {
 		err := ishm.Unlink(shmname)
 		if err != nil {
-			return err
+			if !errors.Is(err, fs.ErrNotExist) {
+				return err
+			}
 		}
 
 		dbResult := tx.Unscoped().

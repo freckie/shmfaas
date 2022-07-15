@@ -34,6 +34,7 @@ func main() {
 	router.GET("/shmodels/:name", ep.GetSharedModel)
 	router.GET("/shmodels/:name/:tag", ep.GetModelTag)
 	router.POST("/shmodels/:name/:tag", ep.PostModelTag)
+	router.PUT("/shmodels/:name/:tag", ep.PutModelTag)
 	router.DELETE("/shmodels/:name/:tag", ep.DeleteModelTag)
 
 	// Serve
