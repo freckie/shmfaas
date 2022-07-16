@@ -187,10 +187,12 @@ func (e *Endpoint) PostModelTag(w http.ResponseWriter, r *http.Request, ps httpr
 	shmname := xid.New().String()
 
 	err = db.Transaction(func(tx *gorm.DB) error {
-		_, err = ishm.Create(shmname, shmsize, 0666)
+		f, err := ishm.Create(shmname, shmsize, 0666)
 		if err != nil {
 			return err
 		}
+		fInfo, _ := f.Stat()
+		shmsize = fInfo.Size()
 
 		newModel := &entity.SharedModel{
 			Name:     modelName,
