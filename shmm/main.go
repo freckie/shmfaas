@@ -36,6 +36,8 @@ func main() {
 	router.POST("/shmodels/:name/:tag", ep.PostModelTag)
 	router.PUT("/shmodels/:name/:tag", ep.PutModelTag)
 	router.DELETE("/shmodels/:name/:tag", ep.DeleteModelTag)
+	router.GET("/metrics/mem", ep.ListMem)
+	router.GET("/metrics/health", ep.Health)
 
 	// Serve
 	log.Println("Starting HTTP Server on port", port)
