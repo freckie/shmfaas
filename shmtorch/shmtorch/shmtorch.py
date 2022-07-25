@@ -62,6 +62,8 @@ def x_save_states(model: torch.nn.Module, shmname: str) -> Tuple[SharedMemory, X
         tensors_module = {'params': [], 'buffers': []}
         for name, param in module.named_parameters(recurse=False):
             t = torch.clone(param).detach().numpy()
+            if len(t.shape) <= 0:
+                continue
             shmsize += t.nbytes
 
             metadata.add(name, t.shape, t.dtype, t.nbytes)
@@ -69,6 +71,8 @@ def x_save_states(model: torch.nn.Module, shmname: str) -> Tuple[SharedMemory, X
 
         for name, buffer in module.named_buffers(recurse=False):
             t = torch.clone(buffer).detach().numpy()
+            if len(t.shape) <= 0:
+                continue
             shmsize += t.nbytes
 
             metadata.add(name, t.shape, t.dtype, t.nbytes)
@@ -125,7 +129,7 @@ def x_load_states(model: torch.nn.Module, metadata: XMetadata) -> Tuple[SharedMe
         for _ in range(buffer_counts):
             _item = items[curr]
             _shmarray = np.ndarray(shape=_item.shape, dtype=_item.dtype, buffer=shm.buf[offset:offset+_item.nbytes])
-            module.register_buffer(name=_item.name, param=torch.from_numpy(_shmarray))
+            module.register_buffer(name=_item.name, tensor=torch.from_numpy(_shmarray))
             offset += _item.nbytes
             curr += 1
 
