@@ -268,7 +268,10 @@ func (e *Endpoint) PutModelTag(w http.ResponseWriter, r *http.Request, ps httpro
 		// Update with conditions
 		dbResult := tx.Model(&shModel).
 			Where("name = ? AND tag = ?", modelName, tagName).
-			Update("metadata", reqBody.Metadata)
+			Updates(map[string]interface{}{
+				"metadata": reqBody.Metadata,
+				"status":   1,
+			})
 		if dbResult.Error != nil {
 			return dbResult.Error
 		}

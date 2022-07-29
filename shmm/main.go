@@ -36,6 +36,7 @@ func main() {
 	router.POST("/shmodels/:name/:tag", ep.PostModelTag)
 	router.PUT("/shmodels/:name/:tag", ep.PutModelTag)
 	router.DELETE("/shmodels/:name/:tag", ep.DeleteModelTag)
+	router.GET("/shmodels/:name/:tag/accesses", ep.ListAccess)
 	router.GET("/metrics/mem", ep.ListMem)
 	router.GET("/metrics/health", ep.Health)
 
