@@ -1,4 +1,6 @@
-package shm
+//go:build darwin
+
+package posix_shm
 
 import (
 	"os"

@@ -7,16 +7,10 @@ import (
 
 	"github.com/freckie/shmfaas/shmm/endpoint"
 
-	"github.com/joho/godotenv"
 	"github.com/julienschmidt/httprouter"
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		panic("Required .env file")
-	}
-
 	// Environment variables
 	port := os.Getenv("PORT")
 	dbname := os.Getenv("SQLITE3")
