@@ -1,13 +1,13 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"os"
 
 	"github.com/freckie/shmfaas/shmm/endpoint"
 
 	"github.com/julienschmidt/httprouter"
+	klog "k8s.io/klog/v2"
 )
 
 func main() {
@@ -35,6 +35,9 @@ func main() {
 	router.GET("/metrics/health", ep.Health)
 
 	// Serve
-	log.Println("Starting HTTP Server on port", port)
-	log.Fatal(http.ListenAndServe(":"+port, router))
+	klog.InfoSDepth(0, "Starting HTTP Server on port", port)
+	klog.ErrorSDepth(0,
+		http.ListenAndServe(":"+port, router),
+		"Closing HTTP Server ...",
+	)
 }
