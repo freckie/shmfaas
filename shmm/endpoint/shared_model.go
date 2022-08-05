@@ -14,6 +14,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/rs/xid"
 	"gorm.io/gorm"
+	klog "k8s.io/klog/v2"
 )
 
 // GET /shmodels
@@ -194,6 +195,8 @@ func (e *Endpoint) PostModelTag(w http.ResponseWriter, r *http.Request, ps httpr
 		fInfo, _ := f.Stat()
 		shmsize = fInfo.Size()
 
+		klog.InfoSDepth(2, "Created shm region successfully.", "name", fInfo.Name(), "size", fInfo.Size())
+
 		newModel := &entity.SharedModel{
 			Name:     modelName,
 			Tag:      tagName,
@@ -326,6 +329,8 @@ func (e *Endpoint) DeleteModelTag(w http.ResponseWriter, r *http.Request, ps htt
 				return err
 			}
 		}
+
+		klog.InfoSDepth(2, "Released shm region successfully.", "name", shmname)
 
 		dbResult := tx.Unscoped().
 			Where("name = ? AND tag = ?", modelName, tagName).

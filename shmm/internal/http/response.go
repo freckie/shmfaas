@@ -2,8 +2,9 @@ package http
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
+
+	klog "k8s.io/klog/v2"
 )
 
 type Response struct {
@@ -28,7 +29,7 @@ func ResponseOK(w http.ResponseWriter, msg string, data interface{}) {
 
 // ResponseError makes an error response.
 func ResponseError(w http.ResponseWriter, errorCode int, errorMsg string) {
-	log.Println("[Error] :", errorCode, errorMsg)
+	klog.ErrorfDepth(1, "[ %d error ] %s", errorCode, errorMsg)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")

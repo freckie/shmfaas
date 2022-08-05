@@ -10,6 +10,15 @@ import (
 	klog "k8s.io/klog/v2"
 )
 
+type LoggingRouter struct {
+	handler http.Handler
+}
+
+func (l *LoggingRouter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	klog.InfoSDepth(1, "Request arrived", "method", r.Method, "path", r.URL.Path)
+	l.handler.ServeHTTP(w, r)
+}
+
 func main() {
 	// Environment variables
 	port := os.Getenv("PORT")
@@ -35,9 +44,10 @@ func main() {
 	router.GET("/metrics/health", ep.Health)
 
 	// Serve
-	klog.InfoSDepth(0, "Starting HTTP Server on port", port)
-	klog.ErrorSDepth(0,
-		http.ListenAndServe(":"+port, router),
+	logRouter := LoggingRouter{router}
+	klog.InfoSDepth(0, "Starting HTTP Server", "port", port, "dbname", dbname)
+	klog.ErrorDepth(0,
+		http.ListenAndServe(":"+port, &logRouter),
 		"Closing HTTP Server ...",
 	)
 }
