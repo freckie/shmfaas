@@ -39,8 +39,8 @@ func main() {
 	router.GET("/metrics/health", ep.Health)
 
 	// Serve
-	klog.InfoSDepth(0, "HTTP server started")
-	klog.ErrorDepth(0,
+	klog.InfoSDepth(0, "Starting HTTP Server on port", port)
+	klog.ErrorSDepth(0,
 		http.ListenAndServe(":"+port, router),
 		"Closing HTTP Server ...",
 	)
