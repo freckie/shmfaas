@@ -12,7 +12,7 @@ import (
 
 // GET /metric/health
 func (e *Endpoint) Health(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	ihttp.ResponseOK(w, "Health", nil)
+	ihttp.ResponseOK(w, r, "Health", nil)
 }
 
 // GET /metric/mem
@@ -25,7 +25,7 @@ func (e *Endpoint) ListMem(w http.ResponseWriter, r *http.Request, _ httprouter.
 		Select("name AS model_name, tag AS tag_name, shmname, shmsize").
 		Find(&queryResult)
 	if dbResult.Error != nil {
-		ihttp.ResponseError(w, 500, dbResult.Error.Error())
+		ihttp.ResponseError(w, r, 500, dbResult.Error.Error())
 		return
 	}
 
@@ -36,5 +36,5 @@ func (e *Endpoint) ListMem(w http.ResponseWriter, r *http.Request, _ httprouter.
 	}
 	result.ModelCount = len(queryResult)
 
-	ihttp.ResponseOK(w, "Success", result)
+	ihttp.ResponseOK(w, r, "Success", result)
 }

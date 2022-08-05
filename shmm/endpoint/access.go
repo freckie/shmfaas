@@ -20,12 +20,12 @@ func (e *Endpoint) ListAccess(w http.ResponseWriter, r *http.Request, ps httprou
 
 	modelName := ps.ByName("name")
 	if modelName == "" {
-		ihttp.ResponseError(w, 404, "ModelName not found.")
+		ihttp.ResponseError(w, r, 404, "ModelName not found.")
 		return
 	}
 	tagName := ps.ByName("tag")
 	if tagName == "" {
-		ihttp.ResponseError(w, 404, "TagName not found.")
+		ihttp.ResponseError(w, r, 404, "TagName not found.")
 		return
 	}
 
@@ -43,9 +43,9 @@ func (e *Endpoint) ListAccess(w http.ResponseWriter, r *http.Request, ps httprou
 		Find(&queryResult)
 	if dbResult.Error != nil {
 		if errors.Is(dbResult.Error, gorm.ErrRecordNotFound) {
-			ihttp.ResponseError(w, 404, "Model:Tag not found.")
+			ihttp.ResponseError(w, r, 404, "Model:Tag not found.")
 		} else {
-			ihttp.ResponseError(w, 500, dbResult.Error.Error())
+			ihttp.ResponseError(w, r, 500, dbResult.Error.Error())
 		}
 		return
 	}
@@ -58,5 +58,5 @@ func (e *Endpoint) ListAccess(w http.ResponseWriter, r *http.Request, ps httprou
 	}
 	result.AccessCount = len(result.Accesses)
 
-	ihttp.ResponseOK(w, "Success", result)
+	ihttp.ResponseOK(w, r, "Success", result)
 }
