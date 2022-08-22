@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: shmfaas
+
+---
+
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: shmm-daemon
+  namespace: shmfaas
+  labels:
+    k8s-app: shmm
+spec:
+  selector:
+    matchLabels:
+      name: shmm-pod
+  template:
+    metadata:
+      labels:
+        name: shmm-pod
+    spec:
+      hostIPC: true
+      containers:
+      - name: shmm-pod
+        image: ghcr.io/freckie/shmm:0.0.1
+        env:
+        - name: PORT
+          value: "30000"
+        - name: SQLITE3
+          value: "shmm.db3"
+        ports:
+        - containerPort: 30000
+          hostPort: 30000
+          protocol: TCP
