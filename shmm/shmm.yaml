@@ -24,7 +24,7 @@ spec:
       hostIPC: true
       containers:
       - name: shmm-pod
-        image: ghcr.io/freckie/shmm:0.0.1
+        image: ghcr.io/freckie/shmm:0.0.2
         env:
         - name: PORT
           value: "30000"

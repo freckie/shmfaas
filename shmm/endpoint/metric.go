@@ -2,6 +2,7 @@ package endpoint
 
 import (
 	"net/http"
+	"syscall"
 
 	"github.com/freckie/shmfaas/shmm/entity"
 	ihttp "github.com/freckie/shmfaas/shmm/internal/http"
@@ -29,12 +30,22 @@ func (e *Endpoint) ListMem(w http.ResponseWriter, r *http.Request, _ httprouter.
 		return
 	}
 
-	result.MemSum = 0
+	result.ShmSum = 0
 	result.Models = queryResult
 	for _, iter := range queryResult {
-		result.MemSum += iter.Shmsize
+		result.ShmSum += iter.Shmsize
 	}
 	result.ModelCount = len(queryResult)
+
+	fs := syscall.Statfs_t{}
+	err := syscall.Statfs("/dev/shm", &fs)
+	if err != nil {
+		ihttp.ResponseError(w, r, 500, "Cannot get the status of /dev/shm : "+err.Error())
+		return
+	}
+	result.ShmDisk.All = fs.Blocks * uint64(fs.Bsize)
+	result.ShmDisk.Free = fs.Bfree * uint64(fs.Bsize)
+	result.ShmDisk.Used = result.ShmDisk.All - result.ShmDisk.Free
 
 	ihttp.ResponseOK(w, r, "Success", result)
 }
