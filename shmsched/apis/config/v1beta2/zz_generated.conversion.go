@@ -24,13 +24,13 @@ package v1beta2
 import (
 	unsafe "unsafe"
 
+	config "github.com/freckie/shmm/shmsched/apis/config"
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	conversion "k8s.io/apimachinery/pkg/conversion"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	configv1beta2 "k8s.io/kube-scheduler/config/v1beta2"
 	apisconfig "k8s.io/kubernetes/pkg/scheduler/apis/config"
-	config "sigs.k8s.io/scheduler-plugins/apis/config"
 )
 
 func init() {

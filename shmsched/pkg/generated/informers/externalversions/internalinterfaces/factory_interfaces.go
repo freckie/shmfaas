@@ -21,10 +21,10 @@ package internalinterfaces
 import (
 	time "time"
 
+	versioned "github.com/freckie/shmm/shmsched/pkg/generated/clientset/versioned"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	cache "k8s.io/client-go/tools/cache"
-	versioned "sigs.k8s.io/scheduler-plugins/pkg/generated/clientset/versioned"
 )
 
 // NewInformerFunc takes versioned.Interface and time.Duration to return a SharedIndexInformer.

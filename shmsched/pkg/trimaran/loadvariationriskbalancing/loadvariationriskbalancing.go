@@ -32,8 +32,8 @@ import (
 	"k8s.io/klog/v2"
 	"k8s.io/kubernetes/pkg/scheduler/framework"
 
-	pluginConfig "sigs.k8s.io/scheduler-plugins/apis/config"
-	"sigs.k8s.io/scheduler-plugins/pkg/trimaran"
+	pluginConfig "github.com/freckie/shmm/shmsched/apis/config"
+	"github.com/freckie/shmm/shmsched/pkg/trimaran"
 )
 
 const (

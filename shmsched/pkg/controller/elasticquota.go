@@ -22,6 +22,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/freckie/shmm/shmsched/pkg/util"
 	v1 "k8s.io/api/core/v1"
 	apiequality "k8s.io/apimachinery/pkg/api/equality"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
@@ -43,12 +44,11 @@ import (
 	"k8s.io/client-go/util/workqueue"
 	"k8s.io/klog/v2"
 	kubefeatures "k8s.io/kubernetes/pkg/features"
-	"sigs.k8s.io/scheduler-plugins/pkg/util"
 
-	schedv1alpha1 "sigs.k8s.io/scheduler-plugins/apis/scheduling/v1alpha1"
-	schedclientset "sigs.k8s.io/scheduler-plugins/pkg/generated/clientset/versioned"
-	schedinformer "sigs.k8s.io/scheduler-plugins/pkg/generated/informers/externalversions/scheduling/v1alpha1"
-	schedlister "sigs.k8s.io/scheduler-plugins/pkg/generated/listers/scheduling/v1alpha1"
+	schedv1alpha1 "github.com/freckie/shmm/shmsched/apis/scheduling/v1alpha1"
+	schedclientset "github.com/freckie/shmm/shmsched/pkg/generated/clientset/versioned"
+	schedinformer "github.com/freckie/shmm/shmsched/pkg/generated/informers/externalversions/scheduling/v1alpha1"
+	schedlister "github.com/freckie/shmm/shmsched/pkg/generated/listers/scheduling/v1alpha1"
 )
 
 // ElasticQuotaController is a controller that process elastic quota using provided Handler interface

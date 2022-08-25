@@ -34,8 +34,8 @@ import (
 	st "k8s.io/kubernetes/pkg/scheduler/testing"
 	imageutils "k8s.io/kubernetes/test/utils/image"
 
-	"sigs.k8s.io/scheduler-plugins/pkg/qos"
-	"sigs.k8s.io/scheduler-plugins/test/util"
+	"github.com/freckie/shmm/shmsched/pkg/qos"
+	"github.com/freckie/shmm/shmsched/test/util"
 )
 
 func TestQOSPlugin(t *testing.T) {

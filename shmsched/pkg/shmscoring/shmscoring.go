@@ -6,11 +6,11 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/freckie/shmm/shmsched/apis/config"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	klog "k8s.io/klog/v2"
 	"k8s.io/kubernetes/pkg/scheduler/framework"
-	"sigs.k8s.io/scheduler-plugins/pkg/apis/config"
 )
 
 type ShmScoring struct {

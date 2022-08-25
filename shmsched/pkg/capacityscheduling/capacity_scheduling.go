@@ -42,12 +42,12 @@ import (
 	"k8s.io/kubernetes/pkg/scheduler/metrics"
 	schedutil "k8s.io/kubernetes/pkg/scheduler/util"
 
-	"sigs.k8s.io/scheduler-plugins/apis/scheduling"
-	"sigs.k8s.io/scheduler-plugins/apis/scheduling/v1alpha1"
-	"sigs.k8s.io/scheduler-plugins/pkg/generated/clientset/versioned"
-	schedinformer "sigs.k8s.io/scheduler-plugins/pkg/generated/informers/externalversions"
-	externalv1alpha1 "sigs.k8s.io/scheduler-plugins/pkg/generated/listers/scheduling/v1alpha1"
-	"sigs.k8s.io/scheduler-plugins/pkg/util"
+	"github.com/freckie/shmm/shmsched/apis/scheduling"
+	"github.com/freckie/shmm/shmsched/apis/scheduling/v1alpha1"
+	"github.com/freckie/shmm/shmsched/pkg/generated/clientset/versioned"
+	schedinformer "github.com/freckie/shmm/shmsched/pkg/generated/informers/externalversions"
+	externalv1alpha1 "github.com/freckie/shmm/shmsched/pkg/generated/listers/scheduling/v1alpha1"
+	"github.com/freckie/shmm/shmsched/pkg/util"
 )
 
 // CapacityScheduling is a plugin that implements the mechanism of capacity scheduling.

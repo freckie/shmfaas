@@ -22,14 +22,14 @@ import (
 	"context"
 	time "time"
 
+	schedulingv1alpha1 "github.com/freckie/shmm/shmsched/apis/scheduling/v1alpha1"
+	versioned "github.com/freckie/shmm/shmsched/pkg/generated/clientset/versioned"
+	internalinterfaces "github.com/freckie/shmm/shmsched/pkg/generated/informers/externalversions/internalinterfaces"
+	v1alpha1 "github.com/freckie/shmm/shmsched/pkg/generated/listers/scheduling/v1alpha1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	watch "k8s.io/apimachinery/pkg/watch"
 	cache "k8s.io/client-go/tools/cache"
-	schedulingv1alpha1 "sigs.k8s.io/scheduler-plugins/apis/scheduling/v1alpha1"
-	versioned "sigs.k8s.io/scheduler-plugins/pkg/generated/clientset/versioned"
-	internalinterfaces "sigs.k8s.io/scheduler-plugins/pkg/generated/informers/externalversions/internalinterfaces"
-	v1alpha1 "sigs.k8s.io/scheduler-plugins/pkg/generated/listers/scheduling/v1alpha1"
 )
 
 // PodGroupInformer provides access to a shared informer and lister for

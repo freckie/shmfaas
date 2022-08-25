@@ -28,8 +28,8 @@ import (
 	bm "k8s.io/kubernetes/pkg/kubelet/cm/topologymanager/bitmask"
 	"k8s.io/kubernetes/pkg/scheduler/framework"
 
+	"github.com/freckie/shmm/shmsched/pkg/util"
 	topologyv1alpha1 "github.com/k8stopologyawareschedwg/noderesourcetopology-api/pkg/apis/topology/v1alpha1"
-	"sigs.k8s.io/scheduler-plugins/pkg/util"
 )
 
 // The maximum number of NUMA nodes that Topology Manager allows is 8

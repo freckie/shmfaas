@@ -32,10 +32,10 @@ import (
 	"k8s.io/klog/v2"
 	"k8s.io/kubernetes/pkg/controller"
 
-	"sigs.k8s.io/scheduler-plugins/apis/scheduling/v1alpha1"
-	schedfake "sigs.k8s.io/scheduler-plugins/pkg/generated/clientset/versioned/fake"
-	schedinformer "sigs.k8s.io/scheduler-plugins/pkg/generated/informers/externalversions"
-	testutil "sigs.k8s.io/scheduler-plugins/test/integration"
+	"github.com/freckie/shmm/shmsched/apis/scheduling/v1alpha1"
+	schedfake "github.com/freckie/shmm/shmsched/pkg/generated/clientset/versioned/fake"
+	schedinformer "github.com/freckie/shmm/shmsched/pkg/generated/informers/externalversions"
+	testutil "github.com/freckie/shmm/shmsched/test/integration"
 )
 
 func TestElasticQuotaController_Run(t *testing.T) {

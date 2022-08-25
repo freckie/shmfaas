@@ -29,13 +29,13 @@ import (
 	"k8s.io/klog/v2"
 	"k8s.io/kubernetes/pkg/scheduler/framework"
 
-	"sigs.k8s.io/scheduler-plugins/apis/config"
-	"sigs.k8s.io/scheduler-plugins/apis/scheduling"
-	"sigs.k8s.io/scheduler-plugins/apis/scheduling/v1alpha1"
-	"sigs.k8s.io/scheduler-plugins/pkg/coscheduling/core"
-	pgclientset "sigs.k8s.io/scheduler-plugins/pkg/generated/clientset/versioned"
-	pgformers "sigs.k8s.io/scheduler-plugins/pkg/generated/informers/externalversions"
-	"sigs.k8s.io/scheduler-plugins/pkg/util"
+	"github.com/freckie/shmm/shmsched/apis/config"
+	"github.com/freckie/shmm/shmsched/apis/scheduling"
+	"github.com/freckie/shmm/shmsched/apis/scheduling/v1alpha1"
+	"github.com/freckie/shmm/shmsched/pkg/coscheduling/core"
+	pgclientset "github.com/freckie/shmm/shmsched/pkg/generated/clientset/versioned"
+	pgformers "github.com/freckie/shmm/shmsched/pkg/generated/informers/externalversions"
+	"github.com/freckie/shmm/shmsched/pkg/util"
 )
 
 // Coscheduling is a plugin that schedules pods in a group.

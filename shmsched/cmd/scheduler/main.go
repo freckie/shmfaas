@@ -22,18 +22,18 @@ import (
 	"k8s.io/component-base/cli"
 	"k8s.io/kubernetes/cmd/kube-scheduler/app"
 
-	"sigs.k8s.io/scheduler-plugins/pkg/capacityscheduling"
-	"sigs.k8s.io/scheduler-plugins/pkg/coscheduling"
-	"sigs.k8s.io/scheduler-plugins/pkg/noderesources"
-	"sigs.k8s.io/scheduler-plugins/pkg/noderesourcetopology"
-	"sigs.k8s.io/scheduler-plugins/pkg/podstate"
-	"sigs.k8s.io/scheduler-plugins/pkg/preemptiontoleration"
-	"sigs.k8s.io/scheduler-plugins/pkg/qos"
-	"sigs.k8s.io/scheduler-plugins/pkg/trimaran/loadvariationriskbalancing"
-	"sigs.k8s.io/scheduler-plugins/pkg/trimaran/targetloadpacking"
+	"github.com/freckie/shmm/shmsched/pkg/capacityscheduling"
+	"github.com/freckie/shmm/shmsched/pkg/coscheduling"
+	"github.com/freckie/shmm/shmsched/pkg/noderesources"
+	"github.com/freckie/shmm/shmsched/pkg/noderesourcetopology"
+	"github.com/freckie/shmm/shmsched/pkg/podstate"
+	"github.com/freckie/shmm/shmsched/pkg/preemptiontoleration"
+	"github.com/freckie/shmm/shmsched/pkg/qos"
+	"github.com/freckie/shmm/shmsched/pkg/trimaran/loadvariationriskbalancing"
+	"github.com/freckie/shmm/shmsched/pkg/trimaran/targetloadpacking"
 
 	// Ensure scheme package is initialized.
-	_ "sigs.k8s.io/scheduler-plugins/apis/config/scheme"
+	_ "github.com/freckie/shmm/shmsched/apis/config/scheme"
 )
 
 func main() {

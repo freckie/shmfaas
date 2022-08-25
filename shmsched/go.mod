@@ -1,4 +1,4 @@
-module sigs.k8s.io/scheduler-plugins
+module github.com/freckie/shmm/shmsched
 
 go 1.18
 
