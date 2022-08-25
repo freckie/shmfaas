@@ -1,6 +1,7 @@
 # Fr3ky
 .DS_Store
 .vscode/
+.idea/
 *.pt
 *.pth
 *.pickle
