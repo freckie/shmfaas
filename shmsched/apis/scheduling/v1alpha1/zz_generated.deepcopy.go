@@ -201,7 +201,7 @@ func (in *PodGroupSpec) DeepCopyInto(out *PodGroupSpec) {
 	*out = *in
 	if in.MinResources != nil {
 		in, out := &in.MinResources, &out.MinResources
-		*out = new(v1.ResourceList)
+		*out = new(map[v1.ResourceName]resource.Quantity)
 		if **in != nil {
 			in, out := *in, *out
 			*out = make(map[v1.ResourceName]resource.Quantity, len(*in))
