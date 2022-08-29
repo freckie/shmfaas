@@ -1,0 +1,159 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: shmfaas-scheduler
+  namespace: kube-system
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: shmfaas-scheduler-cr-configmaps
+  namespace: kube-system
+rules:
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get", "list", "watch"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: shmfaas-scheduler-crb-ks
+subjects:
+- kind: ServiceAccount
+  name: shmfaas-scheduler
+  namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: system:kube-scheduler
+  apiGroup: rbac.authorization.k8s.io
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: shmfaas-scheduler-crb-vs
+subjects:
+- kind: ServiceAccount
+  name: shmfaas-scheduler
+  namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: system:volume-scheduler
+  apiGroup: rbac.authorization.k8s.io
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: shmfaas-scheduler-crb-configmaps
+subjects:
+- kind: ServiceAccount
+  name: shmfaas-scheduler
+  namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: shmfaas-scheduler-cr-configmaps
+  apiGroup: rbac.authorization.k8s.io
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: shmscoring-config
+  namespace: kube-system
+data:
+  shmscoring-config.yaml: |
+    apiVersion: kubescheduler.config.k8s.io/v1beta3
+    kind: KubeSchedulerConfiguration
+    clientConnection:
+      kubeconfig: /etc/kubernetes/scheduler.conf
+    profiles:
+    - schedulerName: shmfaas-scheduler
+      plugins:
+        score:
+          enabled:
+          - name: ShmScoring
+          disabled:
+          - name: "*"
+      pluginConfig:
+      - name: ShmScoring
+        args:
+          addrports: [ "192.168.0.4:30000", "192.168.0.5:30000", "192.168.0.6:30000" ]
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    component: scheduler
+    tier: control-plane
+  name: shmfaas-scheduler
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      component: scheduler
+      tier: control-plane
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        component: scheduler
+        tier: control-plane
+        version: second
+    spec:
+      serviceAccountName: shmfaas-scheduler
+      containers:
+      - command:
+        - kube-scheduler
+        - --authentication-kubeconfig=/etc/kubernetes/scheduler.conf
+        - --authorization-kubeconfig=/etc/kubernetes/scheduler.conf
+        - --bind-address=0.0.0.0
+        - --config=/etc/kubernetes/shmfaas-scheduler/shmscoring-config.yaml
+        - --kubeconfig=/etc/kubernetes/scheduler.conf
+        - --secure-port=10260
+        image: ghcr.io/freckie/shmfaas-scheduler:latest
+        imagePullPolicy: Always
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 10260
+            scheme: HTTPS
+          initialDelaySeconds: 15
+        name: shmfaas-scheduler
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 10260
+            scheme: HTTPS
+        resources:
+          requests:
+            cpu: 100m
+        securityContext:
+          privileged: false
+        volumeMounts:
+          - name: kubeconfig-volume
+            mountPath: /etc/kubernetes/scheduler.conf
+            readOnly: true
+          - name: config-volume
+            mountPath: /etc/kubernetes/shmfaas-scheduler
+            readOnly: true
+      hostNetwork: true
+      hostPID: false
+      priorityClassName: system-node-critical
+      volumes:
+        - name: kubeconfig-volume
+          hostPath:
+            path: /etc/kubernetes/scheduler.conf
+            type: FileOrCreate
+        - name: config-volume
+          configMap:
+            name: shmscoring-config
