@@ -1,12 +1,17 @@
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
-  name: fn-shmfaas
-  namespace: freckie
+  name: fn-shmtorch
+  namespace: shmfaas
+  labels:
+    shmfaas-model-name: aaa
+    shmfaas-tag-name: aaa
+    shmfaas-shm-request: "553648128"
 spec:
   template:
     spec:
       hostIPC: true
+      schedulerName: shmfaas-scheduler
       containers:
       - image: ghcr.io/freckie/fn-shmfaas:0.0.1
         imagePullPolicy: Always #for debug
@@ -15,4 +20,3 @@ spec:
           value: "vgg16"
         - name: SHMM_TAG
           value: "0.0.1"
-
