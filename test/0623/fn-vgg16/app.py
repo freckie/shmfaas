@@ -14,7 +14,7 @@ import shmtorch
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/vgg16')
 def predict():
     model_skeleton = models.vgg16(False, False)
 

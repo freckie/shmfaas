@@ -1,4 +1,4 @@
-# freckie/fn-shmfaas
+# freckie/fn-vgg16
 
 # Use the official lightweight Python image.
 # https://hub.docker.com/_/python
