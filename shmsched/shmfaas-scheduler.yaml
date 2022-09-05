@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: shmfaas-scheduler
-  namespace: kube-system
+  namespace: shmfaas
 
 ---
 
@@ -10,7 +10,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: shmfaas-scheduler-cr-configmaps
-  namespace: kube-system
+  namespace: shmfaas
 rules:
 - apiGroups: [""]
   resources: ["configmaps"]
@@ -25,7 +25,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: shmfaas-scheduler
-  namespace: kube-system
+  namespace: shmfaas
 roleRef:
   kind: ClusterRole
   name: system:kube-scheduler
@@ -40,7 +40,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: shmfaas-scheduler
-  namespace: kube-system
+  namespace: shmfaas
 roleRef:
   kind: ClusterRole
   name: system:volume-scheduler
@@ -55,7 +55,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: shmfaas-scheduler
-  namespace: kube-system
+  namespace: shmfaas
 roleRef:
   kind: ClusterRole
   name: shmfaas-scheduler-cr-configmaps
@@ -67,7 +67,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: shmscoring-config
-  namespace: kube-system
+  namespace: shmfaas
 data:
   shmscoring-config.yaml: |
     apiVersion: kubescheduler.config.k8s.io/v1beta3
@@ -96,7 +96,7 @@ metadata:
     component: scheduler
     tier: control-plane
   name: shmfaas-scheduler
-  namespace: kube-system
+  namespace: shmfaas
 spec:
   selector:
     matchLabels:
