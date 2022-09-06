@@ -120,6 +120,7 @@ spec:
         - --config=/etc/kubernetes/shmfaas-scheduler/shmscoring-config.yaml
         - --kubeconfig=/etc/kubernetes/scheduler.conf
         - --secure-port=10260
+        - --leader-elect=false
         image: ghcr.io/freckie/shmfaas-scheduler:latest
         imagePullPolicy: Always
         livenessProbe:
@@ -157,3 +158,14 @@ spec:
         - name: config-volume
           configMap:
             name: shmscoring-config
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: node-role.kubernetes.io/master
+                operator: Exists
