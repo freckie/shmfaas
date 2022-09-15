@@ -27,10 +27,10 @@ spec:
         image: ghcr.io/freckie/shmm:0.0.2
         env:
         - name: PORT
-          value: "30000"
+          value: "20000"
         - name: SQLITE3
           value: "shmm.db3"
         ports:
-        - containerPort: 30000
-          hostPort: 30000
+        - containerPort: 20000
+          hostPort: 20000
           protocol: TCP
