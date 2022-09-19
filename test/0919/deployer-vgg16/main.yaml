@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: deployer-vgg16
+  namespace: shmfaas
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      hostIPC: true
+      hostNetwork: true
+      containers:
+      - name: deployer-vgg16
+        image: ghcr.io/freckie/deployer-vgg16:0919
+        # imagePullPolicy: Always #for debug
+        env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: SHMM_NAME
+          value: vgg16
+        - name: TAG_NAME
+          value: "0.0.1"
+        - name: SHMNAME
+          value: shm_0919
