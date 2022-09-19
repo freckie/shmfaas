@@ -1,5 +1,6 @@
 import copy
 import json
+import base64
 import pickle
 import requests
 import itertools
@@ -111,9 +112,9 @@ def x_apply_to_shmm(addr: str, model: str, tag: str, metadata: XMetadata):
         print('Failed to create SharedModel. [%d] %s' % (req.status_code, req.json()))
         return
 
-    enc_metadata = str(pickle.dumps(metadata))
+    enc = lambda obj: base64.b64encode(pickle.dumps(obj)).decode('ascii')
     req2 = requests.put(url, data=json.dumps({
-        'metadata': enc_metadata
+        'metadata': enc(metadata)
     }))
     if req2.status_code != 200:
         print('Failed to put the metadata. [%d] %s' % (req2.status_code, req2.json()))
@@ -162,7 +163,8 @@ def x_get_metadata(addr: str, model: str, tag: str) -> XMetadata:
         print('Failed to create SharedModel. [%d] %s' % (req.status_code, req.json()['message']))
         return
     
-    metadata = pickle.loads(bytes(req.json()['data']['metadata']))
+    dec = lambda obj: pickle.loads(base64.b64decode(obj.encode('ascii')))
+    metadata = dec(req.json()['data']['metadata'])
     return metadata
 
 def x_calc_bytes(model: torch.nn.Module) -> int:
