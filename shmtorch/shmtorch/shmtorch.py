@@ -1,4 +1,7 @@
 import copy
+import json
+import pickle
+import requests
 import itertools
 from typing import Any, Tuple
 from multiprocessing.shared_memory import SharedMemory
@@ -99,6 +102,23 @@ def x_save_states(model: torch.nn.Module, shmname: str) -> Tuple[SharedMemory, X
 
     return shm, metadata
 
+def x_apply_to_shmm(addr: str, model: str, tag: str, metadata: XMetadata):
+    url = 'http://{}/shmodels/{}/{}'.format(addr, model, tag)
+    req = requests.post(url, data=json.dumps({
+        'mem_request': int(metadata._shmsize)
+    }))
+    if req.status_code != 200:
+        print('Failed to create SharedModel. [%d] %s' % (req.status_code, req.json()))
+        return
+
+    enc_metadata = str(pickle.dumps(metadata))
+    req2 = requests.put(url, data=json.dumps({
+        'metadata': enc_metadata
+    }))
+    if req2.status_code != 200:
+        print('Failed to put the metadata. [%d] %s' % (req2.status_code, req2.json()))
+        return
+
 def x_load_states(model: torch.nn.Module, metadata: XMetadata) -> Tuple[SharedMemory, torch.nn.Module]:
     # Make a copy of the given model
     copied_model = copy.deepcopy(model)
@@ -134,6 +154,16 @@ def x_load_states(model: torch.nn.Module, metadata: XMetadata) -> Tuple[SharedMe
             curr += 1
 
     return shm, copied_model
+
+def x_get_metadata(addr: str, model: str, tag: str) -> XMetadata:
+    url = 'http://{}/shmodels/{}/{}'.format(addr, model, tag)
+    req = requests.get(url)
+    if req.status_code != 200:
+        print('Failed to create SharedModel. [%d] %s' % (req.status_code, req.json()['message']))
+        return
+    
+    metadata = pickle.loads(req.json()['data']['metadata'])
+    return metadata
 
 def x_calc_bytes(model: torch.nn.Module) -> int:
     shmsize = 0
