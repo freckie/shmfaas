@@ -162,7 +162,7 @@ def x_get_metadata(addr: str, model: str, tag: str) -> XMetadata:
         print('Failed to create SharedModel. [%d] %s' % (req.status_code, req.json()['message']))
         return
     
-    metadata = pickle.loads(req.json()['data']['metadata'])
+    metadata = pickle.loads(bytes(req.json()['data']['metadata']))
     return metadata
 
 def x_calc_bytes(model: torch.nn.Module) -> int:
