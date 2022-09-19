@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: testpod
+  namespace: shmfaas
+  labels:
+    shmfaas-model-name: testmodel
+    shmfaas-tag-name: v0.0.1
+    shmfaas-shm-request: "1000"
+spec:
+  schedulerName: shmfaas-scheduler
+  containers:
+  - name: testpodcont
+    image: ubuntu:20.04
+    # imagePullPolicy: Always #for debug
+    command: [ "/bin/bash", "-c", "--" ]
+    args: [ "while true; do sleep 30; done;" ]
+    env:
+    - name: NODENAME
+      valueFrom:
+        fieldRef:
+          fieldPath: spec.nodeName

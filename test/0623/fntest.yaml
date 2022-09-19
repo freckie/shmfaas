@@ -1,0 +1,17 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: fn-helloworld
+  namespace: shmfaas
+spec:
+  template: # pod template
+    metadata:
+      labels:
+        shmfaas-model-name: vgg16
+        shmfaas-tag-name: 0.0.1
+        shmfaas-shm-request: "1"
+    spec:
+      schedulerName: shmfaas-scheduler
+      containers:
+      - image: docker.io/freckie/helloworld-python
+        imagePullPolicy: Always #for debug

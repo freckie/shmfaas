@@ -3,20 +3,25 @@ kind: Service
 metadata:
   name: fn-shmtorch
   namespace: shmfaas
-  labels:
-    shmfaas-model-name: aaa
-    shmfaas-tag-name: aaa
-    shmfaas-shm-request: "553648128"
 spec:
-  template:
+  template: # pod template
+    metadata:
+      labels:
+        shmfaas-model-name: vgg16
+        shmfaas-tag-name: 0.0.1
+        shmfaas-shm-request: "553648128"
     spec:
       hostIPC: true
       schedulerName: shmfaas-scheduler
       containers:
-      - image: ghcr.io/freckie/fn-vgg16:0.0.1
+      - image: ghcr.io/freckie/fn-vgg16:0.0.2
         imagePullPolicy: Always #for debug
         env:
         - name: SHMM_NAME
           value: "vgg16"
-        - name: SHMM_TAG
+        - name: TAG_NAME
           value: "0.0.1"
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
