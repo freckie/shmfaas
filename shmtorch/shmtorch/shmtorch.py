@@ -56,6 +56,17 @@ class XMetaItem:
     def nbytes(self) -> int:
         return self._nbytes
 
+def x_create_shm(addr: str, model: str, tag: str, metadata: XMetadata) -> str:
+    url = 'http://{}/shmodels/{}/{}'.format(addr, model, tag)
+    req = requests.post(url, data=json.dumps({
+        'mem_request': int(metadata._shmsize)
+    }))
+    if req.status_code != 200:
+        print('Failed to create SharedModel. [%d] %s' % (req.status_code, req.json()))
+        return ''
+
+    return req.json()['shmname']
+
 def x_save_states(model: torch.nn.Module, shmname: str) -> Tuple[SharedMemory, XMetadata]:
     metadata = XMetadata(shmname)
 
@@ -88,7 +99,7 @@ def x_save_states(model: torch.nn.Module, shmname: str) -> Tuple[SharedMemory, X
     tensors = itertools.chain.from_iterable([it['params'] + it['buffers'] for it in tensors]) # Flatten the nested list
 
     # Save tensors into the shared memory block
-    shm = SharedMemory(shmname, create=True, size=shmsize)
+    shm = SharedMemory(shmname, create=False, size=shmsize)
     metadata._shmsize = shmsize
     
     start, end = 0, 0
@@ -103,21 +114,15 @@ def x_save_states(model: torch.nn.Module, shmname: str) -> Tuple[SharedMemory, X
 
     return shm, metadata
 
-def x_apply_to_shmm(addr: str, model: str, tag: str, metadata: XMetadata):
+def x_apply_shm(addr: str, model: str, tag: str, metadata: XMetadata):
     url = 'http://{}/shmodels/{}/{}'.format(addr, model, tag)
-    req = requests.post(url, data=json.dumps({
-        'mem_request': int(metadata._shmsize)
-    }))
-    if req.status_code != 200:
-        print('Failed to create SharedModel. [%d] %s' % (req.status_code, req.json()))
-        return
 
     enc = lambda obj: base64.b64encode(pickle.dumps(obj)).decode('ascii')
-    req2 = requests.put(url, data=json.dumps({
+    req = requests.put(url, data=json.dumps({
         'metadata': enc(metadata)
     }))
-    if req2.status_code != 200:
-        print('Failed to put the metadata. [%d] %s' % (req2.status_code, req2.json()))
+    if req.status_code != 200:
+        print('Failed to put the metadata. [%d] %s' % (req.status_code, req.json()))
         return
 
 def x_load_states(model: torch.nn.Module, metadata: XMetadata) -> Tuple[SharedMemory, torch.nn.Module]:

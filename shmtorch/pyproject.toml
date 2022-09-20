@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "shmtorch"
-version = "0.2.0"
+version = "0.3.0"
 description = "shmtorch is an extension for PyTorch, which allows sharing DNN model weight tensors via Shared Memory."
 authors = ["freckie <freckie@frec.kr>"]
 
