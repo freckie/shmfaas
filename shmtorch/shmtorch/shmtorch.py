@@ -176,10 +176,11 @@ def x_calc_bytes(model: torch.nn.Module) -> int:
     shmsize = 0
     for _, module in model.named_modules():
         for _, param in module.named_parameters(recurse=False):
-            t = param.numpy()
+            t = torch.clone(param).detach().numpy()
             shmsize += t.nbytes
 
         for _, buffer in module.named_buffers(recurse=False):
+            t = torch.clone(buffer).detach().numpy()
             t = buffer.numpy()
             shmsize += t.nbytes
 
