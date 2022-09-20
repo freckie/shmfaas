@@ -56,10 +56,10 @@ class XMetaItem:
     def nbytes(self) -> int:
         return self._nbytes
 
-def x_create_shm(addr: str, model: str, tag: str, metadata: XMetadata) -> str:
+def x_create_shm(addr: str, model: str, tag: str, shmsize: int) -> str:
     url = 'http://{}/shmodels/{}/{}'.format(addr, model, tag)
     req = requests.post(url, data=json.dumps({
-        'mem_request': int(metadata._shmsize)
+        'mem_request': int(shmsize)
     }))
     if req.status_code != 200:
         print('Failed to create SharedModel. [%d] %s' % (req.status_code, req.json()))
