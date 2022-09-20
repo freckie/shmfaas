@@ -65,7 +65,7 @@ def x_create_shm(addr: str, model: str, tag: str, shmsize: int) -> str:
         print('Failed to create SharedModel. [%d] %s' % (req.status_code, req.json()))
         return ''
 
-    return req.json()['shmname']
+    return req.json()['data']['shmname']
 
 def x_save_states(model: torch.nn.Module, shmname: str) -> Tuple[SharedMemory, XMetadata]:
     metadata = XMetadata(shmname)
