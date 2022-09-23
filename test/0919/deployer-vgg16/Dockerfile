@@ -1,8 +1,8 @@
-# ghcr.io/freckie/deployer-vgg16:0.2.0
+# ghcr.io/freckie/deployer-vgg16:0.3.4
 
 # Use the official lightweight Python image.
 # https://hub.docker.com/_/python
-FROM ghcr.io/freckie/shmtorch:0.2.0
+FROM ghcr.io/freckie/shmtorch:0.3.4
 
 # Allow statements and log messages to immediately appear in the Knative logs
 ENV PYTHONUNBUFFERED True
@@ -13,6 +13,6 @@ WORKDIR $APP_HOME
 COPY . ./
 
 # Install production dependencies.
-RUN pip install Flask gunicorn pillow torchvision
+RUN pip install torchvision
 
 CMD [ "python", "deploy.py" ]

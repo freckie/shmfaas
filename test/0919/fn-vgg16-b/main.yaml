@@ -1,0 +1,27 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: fn-shmtorch-b
+  namespace: shmfaas
+spec:
+  template: # pod template
+    metadata:
+      # labels:
+      #   shmfaas-model-name: vgg16
+      #   shmfaas-tag-name: 0.0.1
+      #   shmfaas-shm-request: "553648128"
+    spec:
+      # hostIPC: true
+      # schedulerName: shmfaas-scheduler
+      containers:
+      - image: ghcr.io/freckie/fn-vgg16:b-0.0.1
+        # imagePullPolicy: Always #for debug
+        # env:
+        # - name: SHMM_NAME
+        #   value: "vgg16"
+        # - name: TAG_NAME
+        #   value: "0.0.1"
+        # - name: NODE_NAME
+        #   valueFrom:
+        #     fieldRef:
+        #       fieldPath: status.hostIP
