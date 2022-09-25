@@ -28,13 +28,13 @@ func (c *K8sClient) WatchEvents(stopSig chan struct{}, namespace string) {
 				event := obj.(*eventsv1.Event)
 				ts := event.EventTime.Format(metav1.RFC3339Micro)
 				ts2 := event.CreationTimestamp.Format(metav1.RFC3339Micro)
-				klog.Infof("[Added]\n > EventTime: %s (%s)\n > Reason: %s\n > Event: %s\n", ts, ts2, event.Reason, obj)
+				klog.Infof("[Added] %s\n > EventTime: %s (%s)\n > Reason: %s\n > Event: %s\n\n", &event.Regarding.Name, ts, ts2, event.Reason, obj)
 			},
 			DeleteFunc: func(obj interface{}) {
 				event := obj.(*eventsv1.Event)
 				ts := event.EventTime.Format(metav1.RFC3339Micro)
 				ts2 := event.CreationTimestamp.Format(metav1.RFC3339Micro)
-				klog.Infof("[Deleted]\n > EventTime: %s (%s)\n > Reason: %s\n > Event: %s\n", ts, ts2, event.Reason, obj)
+				klog.Infof("[Deleted] %s\n > EventTime: %s (%s)\n > Reason: %s\n > Event: %s\n\n", &event.Regarding.Name, ts, ts2, event.Reason, obj)
 			},
 			UpdateFunc: func(oldObj, newObj interface{}) {
 				klog.Infof("[Updated]\n")
