@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: event-watcher-sa
+  namespace: shmfaas
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: event-watcher-cr
+  namespace: shmfaas
+rules:
+- apiGroups: [ "" ]
+  resources: [ "events" ]
+  verbs: [ "get", "list", "watch" ]
+- apiGroups: [ "events.k8s.io" ]
+  resources: [ "events" ]
+  verbs: [ "get", "list", "watch" ]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: event-watcher-crb
+subjects:
+- kind: ServiceAccount
+  name: event-watcher-sa
+  namespace: shmfaas
+roleRef:
+  kind: ClusterRole
+  name: event-watcher-cr
+  apiGroup: rbac.authorization.k8s.io
+
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: event-watcher
+  namespace: shmfaas
+spec:
+  serviceAccount: event-watcher-sa
+  containers:
+  - name: event-watcher
+    image: ghcr.io/freckie/k8s-event-watcher:0.1.0
+    imagePullPolicy: Always
+    env:
+    - name: NAMESPACE
+      value: shmfaas
