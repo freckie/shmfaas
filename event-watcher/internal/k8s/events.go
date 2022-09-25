@@ -29,7 +29,7 @@ func (c *K8sClient) WatchEvents(stopSig chan struct{}, namespace string) {
 				ts := event.EventTime.Format(metav1.RFC3339Micro)
 				ts2 := event.CreationTimestamp.Format(metav1.RFC3339Micro)
 				klog.Infof("[Added] %s/%s\n > EventTime: %s (%s)\n > Reason: %s\n > Event: %s\n\n",
-					&event.Regarding.Kind,
+					event.Regarding.Kind,
 					event.Regarding.Name,
 					ts,
 					ts2,
@@ -42,7 +42,7 @@ func (c *K8sClient) WatchEvents(stopSig chan struct{}, namespace string) {
 				ts := event.EventTime.Format(metav1.RFC3339Micro)
 				ts2 := event.CreationTimestamp.Format(metav1.RFC3339Micro)
 				klog.Infof("[Deleted] %s/%s\n > EventTime: %s (%s)\n > Reason: %s\n > Event: %s\n\n",
-					&event.Regarding.Kind,
+					event.Regarding.Kind,
 					event.Regarding.Name,
 					ts,
 					ts2,
