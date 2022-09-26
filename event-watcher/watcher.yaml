@@ -37,6 +37,31 @@ roleRef:
 ---
 
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: event-watcher-config
+  namespace: shmfaas
+data:
+  event-watcher-config.yaml: |
+    namespace: shmfaas
+    filterTargets: true
+    targets:
+    - reason: Created
+      resourceKind: Service
+    - reason: Scheduled
+      resourceKind: Pod
+    - reason: Pulling
+      resourceKind: Pod
+    - reason: Pulled
+      resourceKind: Pod
+    - reason: Started
+      resourceKind: Pod
+    - reason: ConfigurationReady
+      resourceKind: Configuration
+
+---
+
+apiVersion: v1
 kind: Pod
 metadata:
   name: event-watcher
@@ -45,8 +70,16 @@ spec:
   serviceAccount: event-watcher-sa
   containers:
   - name: event-watcher
-    image: ghcr.io/freckie/k8s-event-watcher:0.1.3
+    image: ghcr.io/freckie/k8s-event-watcher:0.2.0
     imagePullPolicy: Always
     env:
-    - name: NAMESPACE
-      value: shmfaas
+    - name: CONFIG
+      value: /etc/event-watcher/event-watcher-config.yaml
+    volumeMounts:
+    - name: event-watcher-vol
+      mountPath: /etc/event-watcher
+      readOnly: true
+  volumes:
+  - name: event-watcher-vol
+    configMap:
+      name: event-watcher-config
