@@ -33,13 +33,12 @@ func (c *K8sClient) WatchEvents(stopSig chan struct{}, cfg *iconfig.WatcherConfi
 				if event != nil {
 					ts := event.EventTime.Format(metav1.RFC3339Micro)
 					ts2 := event.CreationTimestamp.Format(metav1.RFC3339Micro)
-					klog.Infof("[Added] %s/%s\n > EventTime: %s (%s)\n > Reason: %s\n > Event: %s\n\n",
+					klog.Infof("[Added] %s/%s\n > EventTime: %s (%s)\n > Reason: %s\n\n",
 						event.Regarding.Kind,
 						event.Regarding.Name,
 						ts,
 						ts2,
 						event.Reason,
-						obj,
 					)
 				}
 			},
@@ -48,7 +47,7 @@ func (c *K8sClient) WatchEvents(stopSig chan struct{}, cfg *iconfig.WatcherConfi
 				if event != nil {
 					ts := event.EventTime.Format(metav1.RFC3339Micro)
 					ts2 := event.CreationTimestamp.Format(metav1.RFC3339Micro)
-					klog.Infof("[Deleted] %s/%s\n > EventTime: %s (%s)\n > Reason: %s\n > Event: %s\n\n",
+					klog.Infof("[Deleted] %s/%s\n > EventTime: %s (%s)\n > Reason: %s\n\n",
 						event.Regarding.Kind,
 						event.Regarding.Name,
 						ts,
@@ -74,7 +73,7 @@ func filterFunc(cfg *iconfig.WatcherConfig) func(*eventsv1.Event) *eventsv1.Even
 	return func(event *eventsv1.Event) *eventsv1.Event {
 		if flag {
 			for _, it := range targets {
-				if event.Reason == it.Reason {
+				if event.Reason == it.Reason && event.Regarding.Kind == it.ResourceKind {
 					return event
 				}
 			}

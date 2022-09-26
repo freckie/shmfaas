@@ -70,7 +70,7 @@ spec:
   serviceAccount: event-watcher-sa
   containers:
   - name: event-watcher
-    image: ghcr.io/freckie/k8s-event-watcher:0.2.0
+    image: ghcr.io/freckie/k8s-event-watcher:0.2.1
     imagePullPolicy: Always
     env:
     - name: CONFIG
