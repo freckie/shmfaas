@@ -1,13 +1,13 @@
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
-  name: vgg16-a
+  name: resnet50-a
   namespace: shmfaas
 spec:
   template: # pod template
     metadata:
       # labels:
-      #   shmfaas-model-name: vgg16
+      #   shmfaas-model-name: resnet50
       #   shmfaas-tag-name: 0.0.1
       #   shmfaas-shm-request: "553648128"
       annotations:
@@ -16,11 +16,11 @@ spec:
       # hostIPC: true
       # schedulerName: shmfaas-scheduler
       containers:
-      - image: ghcr.io/freckie/fn-vgg16:a-0.0.1-squash
+      - image: ghcr.io/freckie/fn-resnet50:a-0.0.1-squash
         imagePullPolicy: Always #for debug
         # env:
         # - name: SHMM_NAME
-        #   value: "vgg16"
+        #   value: "resnet50"
         # - name: TAG_NAME
         #   value: "0.0.1"
         # - name: NODE_NAME

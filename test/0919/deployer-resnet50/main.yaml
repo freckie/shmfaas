@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: deployer-vgg16
+  name: deployer-resnet50
   namespace: shmfaas
 spec:
   ttlSecondsAfterFinished: 60
@@ -12,8 +12,8 @@ spec:
       hostIPC: true
       hostNetwork: true
       containers:
-      - name: deployer-vgg16
-        image: ghcr.io/freckie/deployer-vgg16:0.3.4
+      - name: deployer-resnet50
+        image: ghcr.io/freckie/deployer-resnet50:0.0.1
         imagePullPolicy: Always #for debug
         env:
         - name: NODE_NAME
@@ -21,7 +21,7 @@ spec:
             fieldRef:
               fieldPath: spec.nodeName
         - name: SHMM_NAME
-          value: vgg16
+          value: resnet50
         - name: TAG_NAME
           value: "0.0.1"
       nodeName: dnclab3
