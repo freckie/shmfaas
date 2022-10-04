@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: deployer-vgg16
+  name: deployer-vgg16-dnclab3
   namespace: shmfaas
 spec:
   ttlSecondsAfterFinished: 60
@@ -25,3 +25,63 @@ spec:
         - name: TAG_NAME
           value: "0.0.1"
       nodeName: dnclab3
+
+--- 
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: deployer-vgg16-dnclab4
+  namespace: shmfaas
+spec:
+  ttlSecondsAfterFinished: 60
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      hostIPC: true
+      hostNetwork: true
+      containers:
+      - name: deployer-vgg16
+        image: ghcr.io/freckie/deployer-vgg16:0.3.4
+        imagePullPolicy: Always #for debug
+        env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: SHMM_NAME
+          value: vgg16
+        - name: TAG_NAME
+          value: "0.0.1"
+      nodeName: dnclab4
+
+---
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: deployer-vgg16-dnclab5
+  namespace: shmfaas
+spec:
+  ttlSecondsAfterFinished: 60
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      hostIPC: true
+      hostNetwork: true
+      containers:
+      - name: deployer-vgg16
+        image: ghcr.io/freckie/deployer-vgg16:0.3.4
+        imagePullPolicy: Always #for debug
+        env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: SHMM_NAME
+          value: vgg16
+        - name: TAG_NAME
+          value: "0.0.1"
+      nodeName: dnclab5

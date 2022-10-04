@@ -7,11 +7,12 @@ spec:
   template: # pod template
     metadata:
       labels:
+        shmfaas-target: true
         shmfaas-model-name: resnet50
         shmfaas-tag-name: 0.0.1
         shmfaas-shm-request: "102760448"
       annotations:
-        autoscaling.knative.dev/min-scale: "20"
+        autoscaling.knative.dev/min-scale: "5"
     spec:
       hostIPC: true
       schedulerName: shmfaas-scheduler
