@@ -7,7 +7,7 @@ spec:
   template: # pod template
     metadata:
       labels:
-        shmfaas-target: true
+        shmfaas-target: "true"
       #   shmfaas-model-name: resnet50
       #   shmfaas-tag-name: 0.0.1
       #   shmfaas-shm-request: "553648128"
