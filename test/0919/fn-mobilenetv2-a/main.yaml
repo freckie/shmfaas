@@ -1,7 +1,7 @@
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
-  name: mobilnetv2-a
+  name: mobilenetv2-a
   namespace: shmfaas
 spec:
   template: # pod template
@@ -14,7 +14,7 @@ spec:
       annotations:
         autoscaling.knative.dev/class: kpa.autoscaling.knative.dev
         autoscaling.knative.dev/metric: concurrency
-        autoscaling.knative.dev/target: "10"
+        autoscaling.knative.dev/target: "5"
         autoscaling.knative.dev/min-scale: "1"
         autoscaling.knative.dev/max-scale: "20"
     spec:

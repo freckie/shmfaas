@@ -12,12 +12,11 @@ spec:
         shmfaas-tag-name: 0.0.1
         shmfaas-shm-request: "14680064"
       annotations:
-        autoscaling.knative.dev/min-scale: "5"
-        # autoscaling.knative.dev/class: kpa.autoscaling.knative.dev
-        # autoscaling.knative.dev/metric: concurrency
-        # autoscaling.knative.dev/target: "10"
-        # autoscaling.knative.dev/min-scale: "1"
-        # autoscaling.knative.dev/max-scale: "20"
+        autoscaling.knative.dev/class: kpa.autoscaling.knative.dev
+        autoscaling.knative.dev/metric: concurrency
+        autoscaling.knative.dev/target: "5"
+        autoscaling.knative.dev/min-scale: "1"
+        autoscaling.knative.dev/max-scale: "20"
     spec:
       hostIPC: true
       schedulerName: shmfaas-scheduler
