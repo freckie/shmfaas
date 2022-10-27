@@ -5,7 +5,8 @@ import pickle
 import requests
 import itertools
 from typing import Any, Tuple
-from multiprocessing.shared_memory import SharedMemory
+# from multiprocessing.shared_memory import SharedMemory
+from .shared_memory import SharedMemory
 
 import torch
 import numpy as np
