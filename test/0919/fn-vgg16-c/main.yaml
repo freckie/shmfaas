@@ -21,7 +21,7 @@ spec:
       hostIPC: true
       schedulerName: shmfaas-scheduler
       containers:
-      - image: ghcr.io/freckie/fn-vgg16:c-0.0.6-squash
+      - image: ghcr.io/freckie/fn-vgg16:c-0.1.0-squash
         imagePullPolicy: Always #for debug
         env:
         - name: SHMM_NAME

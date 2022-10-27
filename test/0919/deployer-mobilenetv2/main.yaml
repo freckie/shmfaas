@@ -13,7 +13,7 @@ spec:
       hostNetwork: true
       containers:
       - name: deployer-mobilenetv2
-        image: ghcr.io/freckie/deployer-mobilenetv2:0.0.1
+        image: ghcr.io/freckie/deployer-mobilenetv2:0.1.0
         imagePullPolicy: Always #for debug
         env:
         - name: NODE_NAME
@@ -43,7 +43,7 @@ spec:
       hostNetwork: true
       containers:
       - name: deployer-mobilenetv2
-        image: ghcr.io/freckie/deployer-mobilenetv2:0.0.1
+        image: ghcr.io/freckie/deployer-mobilenetv2:0.1.0
         imagePullPolicy: Always #for debug
         env:
         - name: NODE_NAME
@@ -73,7 +73,7 @@ spec:
       hostNetwork: true
       containers:
       - name: deployer-mobilenetv2
-        image: ghcr.io/freckie/deployer-mobilenetv2:0.0.1
+        image: ghcr.io/freckie/deployer-mobilenetv2:0.1.0
         imagePullPolicy: Always #for debug
         env:
         - name: NODE_NAME

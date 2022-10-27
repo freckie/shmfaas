@@ -1,4 +1,4 @@
-VERSION=a-0.0.1
+VERSION=a-0.1.0
 
 .PHONY: build
 build:

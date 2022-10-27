@@ -1,8 +1,8 @@
-# ghcr.io/freckie/fn-vgg16:c-0.0.6
+# ghcr.io/freckie/fn-vgg16:c-0.1.0
 
 # Use the official lightweight Python image.
 # https://hub.docker.com/_/python
-FROM ghcr.io/freckie/shmtorch:0.3.4
+FROM ghcr.io/freckie/shmtorch:0.4.0
 
 # Allow statements and log messages to immediately appear in the Knative logs
 ENV PYTHONUNBUFFERED True
