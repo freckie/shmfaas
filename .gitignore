@@ -2,6 +2,7 @@
 .DS_Store
 .vscode/
 .idea/
+.fleet/
 *.pt
 *.pth
 *.pickle
